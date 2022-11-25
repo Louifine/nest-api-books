@@ -28,7 +28,7 @@ export class BooksService {
     return `This action updates a #${id} book`;
   }
 
-  remove(id: number): Promise<string> {
+  async remove(id: number): Promise<string> {
     return `This action removes a #${id} book`;
   }
 }

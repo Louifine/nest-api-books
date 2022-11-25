@@ -45,29 +45,78 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Step to init the project
 
-```bash
-# unit tests
-$ npm run test
+Première installation
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```sh
+npm i -g @nest/cli
 ```
 
-## Support
+Pour avoir de l'aide
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```sh
+nest --help
+```
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+0 - Création du workspace Nest avec la commande
 
-## License
+```sh
+nest new nestjs-api-book
+```
 
-Nest is [MIT licensed](LICENSE).
+1 - Création du CRUD pour la ressource Book
+
+```sh
+nest generate ressource books
+
+# OU de son abréviation
+nest g res books
+```
+
+1.1 - Installation de `dotenv`
+
+```sh
+npm i dotenv
+```
+
+et importation dans le `app.module.ts`
+
+```ts
+import * as dotenv from 'dotenv';
+```
+
+2 - Installation de TypeOrm
+
+```sh
+npm i @nestjs/typeorm typeorm pg
+```
+
+2.1 - Changement du port et ajout d'un préfixe global (modification de la fonction bootstrap)
+
+```ts
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api');
+  await app.listen(8080);
+}
+```
+
+2.2 - Injection du du repository Book à l'aide de TypeOrm dans le module Book
+
+```ts
+@Module({
+  imports: [TypeOrmModule.forFeature([Book])],
+  controllers: [BooksController],
+  providers: [BooksService],
+})
+export class BooksModule {}
+```
+
+3 - Injection du repository et complétion du book service
+
+4 - Création de la collection Thunderclient
+
+[installation de l'extention Thunderclient](https://marketplace.visualstudio.com/items?itemName=rangav.vscode-thunder-client)
