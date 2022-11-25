@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -17,19 +17,29 @@ export class BooksService {
   }
 
   async findAll(): Promise<Book[]> {
-    return `This action returns all books`;
+    return await this.bookRepository.find();
   }
 
-  findOne(id: number): Promise<Book> {
-    return `This action returns a #${id} book`;
+  async findOne(idValue: number): Promise<Book> {
+    const bookfound = await this.bookRepository.findOneBy({ id: idValue });
+    if (!bookfound) {
+      throw new NotFoundException(`pas de bouquin avec l'id : ${idValue}`);
+    }
+    return bookfound;
   }
 
-  update(id: number, updateBookDto: UpdateBookDto): Promise<Book> {
-    return `This action updates a #${id} book`;
+  async update(id: number, updateBookDto: UpdateBookDto): Promise<Book> {
+    const upBook = await this.findOne(id);
+    upBook.dateParution = updateBookDto.dateParution;
+    return await this.bookRepository.save(upBook);
   }
 
   async remove(id: number): Promise<string> {
-    return `This action removes a #${id} book`;
+    const result = await this.bookRepository.delete({ id });
+    if (result.affected === 0) {
+      throw new NotFoundException(`pas de bouquin avec l'id : ${id}`);
+    }
+    return `the book with the id #${id} is now burning to hell yeah !`;
   }
 }
 
